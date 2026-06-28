@@ -1,43 +1,36 @@
-# Retail Sales Performance Analysis: A Multiple Regression Approach
+# Retail Sales Performance Analysis
 
 ## Business Problem Summary
-The objective of this project is to understand the drivers of monthly sales performance across various retail store locations. By identifying which operational and environmental factors (such as marketing spend, staffing levels, and location type) most significantly impact revenue, leadership can make data-driven decisions to optimize resource allocation, improve store profitability, and mitigate competitive threats.
+We analyzed retail sales performance to identify key drivers of revenue. By understanding which factors (footfall, marketing, staffing) impact `monthly_sales`, we aim to provide actionable insights for resource allocation and store profitability.
 
 ## Dataset Description
-The dataset contains performance metrics for 320 retail store observations. It includes operational inputs, geographic identifiers, and external environmental factors collected over a defined fiscal period.
+The dataset contains 320 records of store performance, including operational metrics, geographic locations, and external environmental factors.
 
 ## Dependent and Independent Variables
-*   **Dependent Variable (Y):** `monthly_sales` (The primary revenue metric).
-*   **Independent Variables (X):** 
-    *   **Geographic:** `Is_East`, `Is_South`, `Is_West`, `Is_High_Street`, `Is_Airport`.
-    *   **Operational:** `marketing_spend`, `footfall`, `staff_count`, `inventory_availability_pct`, `avg_discount_pct`, `competitor_distance_km`.
-    *   **Contextual:** `holiday_flag`, `customer_rating`.
+*   **Dependent Variable (Y):** `monthly_sales`
+*   **Independent Variables (X):** Geographic dummies (`Is_East`, `Is_South`, `Is_West`, `Is_High_Street`, `Is_Airport`), `marketing_spend`, `footfall`, `avg_discount_pct`, `staff_count`, `inventory_availability_pct`, `competitor_distance_km`, `holiday_flag`, `customer_rating`.
 
 ## Regression Approach
-We employed a multi-stage modeling process, beginning with simple linear regressions to establish baselines for `footfall` and `marketing_spend`, followed by a comprehensive **Multiple Linear Regression** model. This allowed us to control for various confounding variables and isolate the net impact of each business driver.
+We used both Simple Linear Regression (to test individual drivers) and Multiple Linear Regression (to isolate the impact of multiple variables simultaneously).
 
 ## Dummy Variable Approach
-To incorporate categorical data (Region and Store Type) into the regression, we used binary dummy encoding (0 or 1). To prevent the **Dummy Variable Trap** (perfect multicollinearity), we omitted one category from each set to serve as the **Reference Category**:
-*   **Region:** `North` (Baseline).
-*   **Store Type:** `Mall` & `Residential` (Baseline).
+Categorical variables were converted to binary (0/1) indicators. We used `North` (Region) and `Mall/Residential` (Store Type) as the **Reference Categories** to avoid the dummy variable trap.
 
 ## Model Comparison Summary
-The Multiple Linear Regression model significantly outperformed simple models, achieving an **$R^2$ of 84.34%**. While simple models provided tactical insights into specific drivers, the multiple regression model provided a holistic framework that accounted for operational, geographic, and seasonal interplay.
+The Multiple Regression model achieved an $R^2$ of 84.34%, significantly outperforming the simple regression models which had lower explanatory power.
 
 ## Final Model Selected
-**Multiple Linear Regression**
-*   **Reasoning:** It explains 84.34% of the variation in monthly sales and provides actionable, statistically significant coefficients for key business levers like staffing, inventory availability, and competitive distance.
+**Multiple Linear Regression** was selected because it accounts for operational, geographic, and seasonal factors, providing a comprehensive view of business drivers.
 
 ## Business Recommendation
-1.  **Prioritize Operations:** Focus resources on maintaining high `inventory_availability_pct` and optimized `staff_count`, as these are proven revenue drivers.
-2.  **Strategic Differentiation:** For stores in high-competition zones (low `competitor_distance_km`), emphasize service quality and customer rating to protect sales.
-3.  **Refine Discounting:** Given that `avg_discount_pct` was not statistically significant, leadership should reassess the ROI of broad-based discounting strategies.
+Leadership should prioritize **inventory availability** and **staffing levels** to boost revenue. Broad discounting strategies should be re-evaluated as they lacked statistical significance in our model.
 
 ## Assumptions and Limitations
-*   **Assumption:** The model assumes linear relationships between independent variables and sales.
-*   **Limitation:** Regression shows *association*, not *causation*. Factors like `staff_count` might be higher because the store is already successful, rather than the other way around.
-*   **Limitation:** Unquantifiable factors such as store management quality or localized economic shocks remain outside the model's scope.
+*   **Assumptions:** Linearity, independence of observations, and normal distribution of residuals.
+*   **Limitations:** Correlation does not imply causation; qualitative factors (management quality) are not captured in this data.
 
 ## Screenshots
-*   **Model Comparison:** [screenshots/model_comparison_preview.png](screenshots/model_comparison_preview.png)
-*   **Residual Analysis:** [screenshots/residuals_preview.png](screenshots/residuals_preview.png)
+*   **Simple Regression:** `screenshots/simple_regression_output.png`
+*   **Multiple Regression:** `screenshots/multiple_regression_output.png`
+*   **Residual Analysis:** `screenshots/residuals_preview.png`
+*   **Model Comparison:** `screenshots/model_comparison_preview.png`
