@@ -1,35 +1,68 @@
-# Model Equations & Dummy Variable Strategy
+# Store Performance Model Equations & Selection
 
-##  Dummy Variable Approach
+This document outlines the mathematical models developed to understand and predict store revenue. The formulas translate our raw operational data into actionable business levers.
 
-To include the categorical variables `region` and `store_type` in our multiple linear regression model, they were converted into binary dummy variables (taking values of 0 or 1). 
+## 1. Simple Regression Equations
+Simple regression models help us understand the isolated impact of a single business driver on monthly sales.
 
-To prevent perfect multicollinearity—a statistical issue known as the **Dummy Variable Trap**—we applied the $N-1$ rule. This means that for any categorical variable with $N$ unique groups, we only include $N-1$ dummy columns in the regression. Including all categories would make the columns perfectly predictable from one another, causing Excel's regression underlying mathematics to fail.
+**Model A: Footfall Impact**
+$$
+\text{Monthly Sales} = 446,410.58 + 35.68(\text{footfall})
+$$
+* **Business Translation:** Before a single customer walks in, a store's baseline revenue stands at $446,410.58. For every additional customer that enters the store, revenue increases by an average of $35.68.
 
-###  1. Regional Category Mapping
-The `region` variable contains 4 distinct groups: East, North, South, and West.
-* **Reference Category (Omitted):** `West`
-* **Included Variables:** 
-  * `Is_East` (1 if store is in the East, 0 otherwise)
-  * `Is_North` (1 if store is in the North, 0 otherwise)
-  * `Is_South` (1 if store is in the South, 0 otherwise)
-
-*Interpretation:* If a store is located in the **West** region, all three dummy variables (`Is_East`, `Is_North`, `Is_South`) will equal `0`. The baseline intercept of the regression equation will inherently capture the performance of the West region.
-
-###  2. Store Type Mapping
-The `store_type` variable contains 4 distinct groups: Residential, High Street, Airport, and Mall.
-* **Reference Category (Omitted):** `Mall`
-* **Included Variables:**
-  * `Is_Residential` (1 if Residential, 0 otherwise)
-  * `Is_High_Street` (1 if High Street, 0 otherwise)
-  * `Is_Airport` (1 if Airport, 0 otherwise)
-
-*Interpretation:* If a store is a **Mall** type, all three store type dummy variables will equal `0`. The baseline performance of Mall stores is integrated directly into the main intercept.
+**Model B: Marketing Spend Impact**
+$$
+\text{Monthly Sales} = 560,777.35 + 2.13(\text{marketing\_spend})
+$$
+* **Business Translation:** Without any marketing, a store generates a baseline of $560,777.35. For every $1 added to the local marketing budget, the store yields an expected return of $2.13 in sales.
 
 ---
 
-## 🔢 Final Calculated Multiple Regression Equation
+## 2. Multiple Regression Equation
+The multiple regression model provides a holistic view of the business by evaluating all operational and environmental factors simultaneously. 
 
-Based on our successful regression run, the final mathematical equation predicting monthly sales is:
+$$
+\begin{aligned}
+\text{Monthly Sales} = \; & 84,083.44 - 11,451.76(\text{Is\_East}) + 9,325.09(\text{Is\_South}) + 12,670.19(\text{Is\_West}) \\
+& + 6,225.45(\text{Is\_High\_Street}) + 29,922.30(\text{Is\_Airport}) + 1.21(\text{marketing\_spend}) \\
+& + 27.92(\text{footfall}) - 48,050.16(\text{avg\_discount\_pct}) + 3,157.36(\text{staff\_count}) \\
+& + 2,925.10(\text{inventory\_availability\_pct}) - 3,230.37(\text{competitor\_distance\_km}) \\
+& + 14,269.13(\text{holiday\_flag}) + 11,872.26(\text{customer\_rating})
+\end{aligned}
+$$
 
-Monthly Sales = 84,083.44 - 11,451.76(Is_East) + 9,325.09(Is_South) + 12,670.19(Is_West) + 6,225.45(Is_High_Street) + 29,922.30(Is_Airport) + 1.21(Marketing Spend) + 27.92(Footfall) - 48,050.16(Avg Discount Pct) + 3,157.36(Staff Count) + 2,925.10(Inventory Availability Pct) - 3,230.37(Competitor Distance KM) + 14,269.14(Holiday Flag) + 11,872.26(Customer Rating)
+### Explanation of Coefficients (Business Impact)
+Each coefficient represents the change in monthly sales when that specific factor increases by one unit, assuming all other operational factors remain identical.
+* **Baseline (Intercept: 84,083.44):** The theoretical starting revenue for a baseline store (North region, Mall/Residential type) when all operational metrics are zero.
+* **marketing_spend (1.21):** Every $1 spent on marketing generates $1.21 in sales when accounting for all other factors.
+* **footfall (27.92):** Each additional visitor contributes roughly $27.92 to revenue.
+* **avg_discount_pct (-48,050.16):** Heavy discounting hurts the top line; a full 100% discount rate logically wipes out revenue, but practically, moving the average discount rate up by 1% drops revenue by roughly $480.50. 
+* **staff_count (3,157.36):** Adding one more employee to the floor drives an additional $3,157.36 in monthly sales, likely through better customer service and faster checkout times.
+* **inventory_availability_pct (2,925.10):** Improving shelf-stocking rates by 1% secures an extra $29.25 in sales by preventing missed opportunities from stock-outs.
+* **competitor_distance_km (-3,230.37):** Every kilometer further away a competitor is positioned surprisingly drops sales by $3,230.37, suggesting our stores perform better in dense retail hubs where competitor proximity actually draws a larger shared crowd.
+* **holiday_flag (14,269.13):** Operating during a recognized holiday period guarantees an automatic $14,269.13 revenue bump.
+* **customer_rating (11,872.26):** Improving the store's average rating by a full 1.0 star increases monthly sales by $11,872.26, proving that customer satisfaction has a direct financial return.
+
+---
+
+## 3. Dummy Variables & Reference Categories
+Statistical models cannot read text categories like "East" or "Airport." We convert these into binary (0 or 1) "dummy variables" to measure their structural impact. To prevent the model from breaking due to redundancy (the Dummy Variable Trap), one category from each group is omitted and serves as the invisible baseline.
+
+**Regional Baseline:**
+* **Reference Category:** North Region.
+* **Interpretation:** The model evaluates East (-$11,451.76), South (+$9,325.09), and West (+$12,670.19) *compared to* the North. If a store is in the West, it naturally earns $12,670.19 more than an identical store in the North.
+
+**Store Type Baseline:**
+* **Reference Category:** Mall & Residential Stores.
+* **Interpretation:** Airport stores hold a massive locational advantage, driving a $29,922.30 premium over standard Mall/Residential stores, likely due to a captive audience with high impulse-buying behavior. High Street locations offer a milder $6,225.45 premium over the baseline.
+
+---
+
+## 4. Final Model Selection
+**Selected Model:** The Multiple Linear Regression Model.
+
+**Reasoning:**
+Relying on the simple regression models is functionally identical to managing a store by only tracking the door counter or only looking at the ad budget. The simple footfall model ignores whether the store is actually staffed to handle the traffic, and the simple marketing model suffers from severe omitted variable bias. 
+
+The **Multiple Regression Model** is the definitive choice because it captures the complex reality of store operations. Explaining over 84% of the variance in revenue, it equips leadership with a multidimensional toolkit. It reveals exactly how to balance the marketing budget, optimize headcount on the floor, and prioritize inventory availability to maximize profitability across different regions and store types.
