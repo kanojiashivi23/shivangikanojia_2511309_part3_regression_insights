@@ -2,7 +2,7 @@
 
 This report compares the performance, insights, explanatory power, and structural limitations of our simple linear regression models against our consolidated multiple linear regression model.
 
-## 📊 Summary Comparison Table
+##  Summary Comparison Table
 
 | Required Item | Simple Regression (Footfall) | Simple Regression (Marketing) | Multiple Regression Model |
 | :--- | :--- | :--- | :--- |
@@ -15,7 +15,7 @@ This report compares the performance, insights, explanatory power, and structura
 
 ---
 
-## 🔍 In-Depth Model Breakdown
+##  In-Depth Model Breakdown
 
 ### 1. Explanatory Power ($R^2$) & Operational Alignment
 * **Simple Footfall Model ($R^2 = 73.27\%$):** Demonstrates that foot traffic alone is a primary foundation of store sales performance. However, relying on this entirely over-simplifies operations.
